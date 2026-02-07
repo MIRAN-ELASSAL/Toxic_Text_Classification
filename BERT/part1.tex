@@ -1,0 +1,124 @@
+\documentclass[12pt]{article}
+
+% ---------- Packages ----------
+\usepackage[a4paper,margin=1in]{geometry}
+\usepackage{graphicx}
+\usepackage{amsmath}
+\usepackage{hyperref}
+\usepackage{setspace}
+\usepackage{float}
+
+
+
+\setstretch{1.2}
+
+% ---------- Title ----------
+\title{\textbf{DistilBERT and ALBERT: Variants of BERT}}
+\date{}
+\begin{document}
+\maketitle
+\section{Introduction}
+Bidirectional Encoder Representations from Transformers (BERT) has become a foundational model in natural language processing due to its ability to learn deep bidirectional contextual representations. BERT has achieved state-of-the-art results on a wide range of tasks, including text classification, question answering, and named entity recognition. However, these performance gains come at the cost of high computational complexity, large memory requirements, and slow inference speeds, which limit BERT’s practicality in resource-constrained and real-time environments.
+
+To address these limitations, several efficient variants of BERT have been proposed. Among the most influential are DistilBERT and ALBERT, both of which aim to preserve BERT’s strong linguistic capabilities while significantly reducing its computational overhead. Rather than altering the Transformer architecture fundamentally, these models introduce optimization strategies that improve efficiency without sacrificing much performance.
+
+\section{Background: Limitations of BERT}
+The original BERT model consists of multiple Transformer encoder layers, each containing self-attention mechanisms and feed-forward networks. Although effective, this design results in:
+\begin{itemize}
+    \item High computational cost during training and inference
+    \item Large memory requirements
+    \item Difficulty deploying on mobile or edge devices
+\end{itemize}
+
+As NLP applications increasingly demand efficiency, optimizing large pre-trained models has become a critical research direction.
+
+\section{DistilBERT}
+DistilBERT is a distilled version of BERT meaning it is trained using knowledge distillation a technique where a smaller model (student) learns to replicate the behavior of a larger model (teacher). This process involves training the student model to mimic the predictions and internal representations of the teacher model. 
+
+\subsection{Architecture}
+DistilBERT focuses on the following key objectives:
+\begin{itemize}
+\item Computational Efficiency: While BERT requires more computational resources to operate due to its large number of parameters. DistilBERT reduces the size of a BERT model by 40\%. It requires less computation and time, which is especially useful when working with large datasets.
+\item Faster Inference Speed: BERT's complexity leads to slow inference times. DistilBERT addresses this problem by being smaller and optimized for speed and giving 60\% faster inference times compared to BERT. On-device applications, such as mobile question-answering apps DistilBERT is 71\% faster than BERT.
+\item Comparable Performance: Although DistilBERT is much smaller it retains 97\% of BERT’s accuracy on popular NLP benchmarks. This balance between size reduction and minimal performance degradation makes it a solid alternative to BERT.
+\end{itemize}
+However, it may still struggle with highly complex reasoning tasks compared to the full BERT model.
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.99\textwidth]{distilbert_architecture.png}
+    \caption{Architecture of DistilBERT}
+    \label{fig:distilbert}
+\end{figure}
+
+\subsection{Training Strategy}
+During pretraining, DistilBERT uses a combination of:
+\begin{itemize}
+    \item Masked Language Modeling loss
+    \item Distillation loss based on the teacher's soft targets
+    \item Cosine embedding loss to align student and teacher representations
+\end{itemize}
+
+This multi-objective training enables DistilBERT to retain much of BERT's linguistic knowledge.
+
+\subsection{Advantages}
+\begin{itemize}
+    \item Speed and Efficiency: With fewer parameters (66 million vs. BERT’s 110 million), DistilBERT is faster to train and deploy, making it ideal for resource-constrained settings.
+    \item Scalability: Its smaller footprint allows it to scale across edge devices, democratizing access to advanced NLP.
+    \item Performance: Despite its size, DistilBERT delivers near-BERT-level accuracy, making it a practical choice without sacrificing too much quality.
+\end{itemize}
+
+\subsection{Applications in NLP}
+DistilBERT shines in a variety of NLP tasks:
+\begin{itemize}
+    \item Sentiment Analysis: Businesses use it to quickly analyze customer reviews or social media posts.
+    \item Chatbots: Its efficiency powers responsive, context-aware conversational agents.
+    \item Text Summarization: DistilBERT can condense lengthy documents into concise summaries.
+    \item Named Entity Recognition (NER): It identifies key entities like names or locations in text with high accuracy.
+\end{itemize}
+
+\subsection{Limitations}
+While DistilBERT is impressive, it’s not without trade-offs. The reduction in size means it may struggle with extremely complex language tasks where BERT’s deeper architecture excels. For cutting-edge research or niche applications requiring peak performance, the original BERT or even larger models like RoBERTa might still be preferred.
+
+
+
+\section{ALBERT}
+ALBERT (A Lite BERT) introduces architectural modifications to significantly reduce model parameters while maintaining performance.
+
+\subsection{Factorized Embedding Parameterization}
+Instead of using large embedding matrices, ALBERT factorizes embeddings into two smaller matrices. This decouples vocabulary size from hidden layer dimensions, reducing memory usage.
+
+\subsection{Cross-Layer Parameter Sharing}
+ALBERT shares parameters across Transformer layers, meaning the same weights are reused at each layer. This drastically reduces the number of parameters without reducing network depth.
+
+\subsection{Sentence Order Prediction}
+ALBERT replaces BERT's Next Sentence Prediction task with Sentence Order Prediction, which better captures discourse coherence.
+
+\subsection{Advantages and Limitations}
+ALBERT significantly reduces memory consumption and scales well to very large models. However, parameter sharing may limit representational diversity across layers.
+
+\section{Applications}
+\begin{itemize}
+    \item Text classification
+    \item Question answering
+    \item Information retrieval
+    \item Conversational AI
+\end{itemize}
+
+\section{Conclusion}
+DistilBERT and ALBERT represent two complementary approaches to optimizing BERT. DistilBERT emphasizes speed and compactness, while ALBERT prioritizes parameter efficiency and scalability. Choosing between them depends on the application requirements, including latency constraints and memory availability. DistilBERT focuses on reducing inference time through model compression and is well-suited for real-time applications while, ALBERT focuses on reducing parameter count through architectural efficiency and is ideal for large-scale pretraining with limited memory.
+
+\begin{thebibliography}{9}
+\bibitem{bert}
+Devlin, J., Chang, M. W., Lee, K., \& Toutanova, K. (2019).
+\textit{BERT: Pre-training of Deep Bidirectional Transformers for Language Understanding}.
+
+\bibitem{distilbert}
+Sanh, V., Debut, L., Chaumond, J., \& Wolf, T. (2019).
+\textit{DistilBERT, a distilled version of BERT}.
+
+\bibitem{albert}
+Lan, Z., Chen, M., Goodman, S., Gimpel, K., Sharma, P., \& Soricut, R. (2020).
+\textit{ALBERT: A Lite BERT for Self-supervised Learning of Language Representations}.
+\end{thebibliography}
+
+\end{document}

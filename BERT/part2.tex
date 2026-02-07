@@ -1,0 +1,103 @@
+\documentclass[12pt]{article}
+
+% ---------- Packages ----------
+\usepackage[a4paper,margin=1in]{geometry}
+\usepackage{amsmath}
+\usepackage{graphicx}
+\usepackage{hyperref}
+\usepackage{setspace}
+\usepackage{float}
+
+\setstretch{1.2}
+
+% ---------- Title ----------
+\title{\textbf{LoRA and QLoRA: Parameter-Efficient Fine-Tuning Techniques for LLMs}}
+\date{}
+
+\begin{document}
+
+\maketitle
+
+\section{Introduction}
+The rapid growth of pretrained language models has significantly improved natural language understanding and generation. However, fine-tuning models with billions of parameters remains computationally expensive and memory-intensive, as traditional fine-tuning updates all model weights. To address these challenges, parameter-efficient fine-tuning methods have been proposed. Among the most effective approaches are Low-Rank Adaptation (LoRA) and Quantized Low-Rank Adaptation (QLoRA), which enable efficient adaptation of large models by updating only a small subset of parameters. These methods allow large language models to be fine-tuned on limited hardware while preserving strong performance.
+
+
+\section{Low-Rank Adaptation (LoRA)}
+LoRA is a fine-tuning technique that reduces the number of trainable parameters by injecting low-rank matrices into pretrained models. Instead of updating the original weight matrices, LoRA learns small rank-decomposed updates that are added to the frozen weights during training.
+
+\subsection{Methodology}
+Given a weight matrix $W$, LoRA decomposes the update into two low-rank matrices:
+\[
+\Delta W = A B
+\]
+where $A$ and $B$ have much smaller dimensions than $W$. During training, only $A$ and $B$ are updated, while the original weights remain frozen. This significantly reduces memory usage and computational cost.
+
+\subsection{Advantages of LoRA}
+LoRA offers several benefits:
+\begin{itemize}
+    \item \textbf{Parameter Efficiency:} Only a small number of parameters are trained.
+    \item \textbf{Reduced Memory Usage:} Suitable for limited GPU environments.
+    \item \textbf{Scalability:} It can be applied to various transformer-based models like GPT, BERT and T5 making it versatile for different tasks.
+    \item \textbf{Modularity:} LoRA adapters can be added or removed without modifying the base model.
+\end{itemize}
+
+\subsection{Limitations of LoRA}
+Despite its efficiency, LoRA still requires storing the base model in full precision, which can be costly for extremely large models.
+
+\section{Quantized Low-Rank Adaptation (QLoRA)}
+QLoRA extends LoRA by introducing model quantization, enabling even larger models to be fine-tuned on consumer-grade hardware.
+QLoRA quantizes the base model weights to 4-bit precision while keeping LoRA adapters in higher precision. This approach drastically reduces memory consumption without significantly degrading performance.
+
+\subsection{Training Strategy}
+QLoRA fine-tunes large language models efficiently by following a structured process. Each step focuses on reducing memory and computation while adapting the model to a specific task.
+\begin{enumerate}
+    \item \textbf{Quantize the Base Model}
+    \begin{itemize}
+        \item The pretrained model is converted from full precision to 4-bit weights.
+        \item This reduces GPU memory usage, allowing large models to run on smaller hardware.
+        \item Quantization methods such as NF4 help maintain accuracy during compression.
+    \end{itemize}
+
+    \item \textbf{Add Low-Rank Adapters}
+    \begin{itemize}
+        \item Small adapter layers are inserted into selected parts of the model, typically the attention layers.
+        \item These adapters remain in higher precision (e.g., 16-bit) to ensure stable training.
+        \item The backbone model is kept frozen, so the original weights are not modified.
+    \end{itemize}
+
+    \item \textbf{Fine-Tune Only the Adapters}
+    \begin{itemize}
+        \item During training, only the adapter layers are updated.
+        \item This drastically reduces the number of trainable parameters and the required computation.
+        \item Fine-tuning becomes faster and feasible on a single GPU or low-resource device.
+    \end{itemize}
+
+    \item \textbf{Merge or Keep Adapters Separate}
+    \begin{itemize}
+        \item After training, adapters can be merged into the quantized model for deployment.
+        \item Alternatively, they can be kept separate, allowing reuse or swapping for different tasks without retraining the base model.
+    \end{itemize}
+\end{enumerate}
+
+\subsection{Advantages of QLoRA}
+\begin{itemize}
+    \item \textbf{Extreme Memory Efficiency:} Enables training very large models on limited hardware.
+    \item \textbf{High Performance:} Achieves performance comparable to full fine-tuning.
+    \item \textbf{Scalability:} Makes large-scale experimentation accessible to more users.
+\end{itemize}
+
+\section{Applications}
+LoRA and QLoRA are widely used in:
+\begin{itemize}
+    \item Instruction tuning of large language models
+    \item Domain-specific adaptation (medical, legal, financial NLP)
+    \item Conversational agents and chatbots
+    \item Text generation and summarization tasks
+\end{itemize}
+
+\section{Conclusion}
+LoRA and QLoRA represent powerful approaches to efficient fine-tuning of large language models. LoRA provides a lightweight and modular solution, while QLoRA further extends these benefits by enabling low-memory training through quantization. Also,LoRA focuses on reducing trainable parameters, while QLoRA further reduces memory through quantization and enable fine-tuning of larger models compared to LoRA. Together, they significantly lower the barrier to adapting large-scale language models, making advanced NLP systems more accessible.
+
+
+
+\end{document}
